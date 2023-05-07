@@ -34,7 +34,7 @@ st.sidebar.header("Sidebar")
 selected_option = st.sidebar.selectbox("Select an option", ["Option 1", "Option 2", "Option 3"])
 st.sidebar.write("You selected:", selected_option)
 
-# Data visualization
+# Data
 data = [1, 2, 3, 4, 5]
 st.line_chart(data)
 
@@ -45,6 +45,4 @@ st.write("The number you entered is:", number)
 # Button
 if st.button("Click me"):
     st.write("Button clicked!")
-
-
 st.table(data)
