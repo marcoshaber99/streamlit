@@ -2,12 +2,13 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import util
 
 def visualization(data,uploaded_file):
     # Set up the Streamlit app
     # st.set_page_config(page_title="Interactive Data Visualization App", layout="wide")
-    st.title("Interactive Data Visualization App")
-
+    st.title("Data Visualization")
+    st.write(util.data)
     # Add a file uploader to the sidebar
      
     st.write("Data preview:")
