@@ -1,32 +1,43 @@
 import streamlit as st
 import pandas as pd
-from test import test
 from data_visualization import visualization
-import util
+from predictions import predictions
 
-#data = pd.DataFrame()
-# from data_visualization import visualization
+
+
+data = pd.DataFrame()
+
 st.sidebar.header("Upload your dataset")
 
 uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
 
+
     # Read the uploaded file and store it in a DataFrame
 if uploaded_file is not None:
-    util.data = pd.read_csv(uploaded_file)
+    
+    data = pd.read_csv(uploaded_file)
+    data = data.dropna()
+    data = data.drop_duplicates()
+
+    st.session_state["data"] = data
 
 # button_style = "background-color:inherit; border: none; color: white; font-size: 1.5rem; margin-top: 2rem;"
 
 # st.markdown(button_style, unsafe_allow_html=True)
 
 
-if len(util.data) != 0:
+if len(data) != 0:
     # visualization(data, uploaded_file)
     if(st.sidebar.button("Data Visualization")):
-        visualization(data, uploaded_file)
+        visualization()
 
     
     if(st.sidebar.button("Data Prediction")):
-        pass
+        predictions()
 
     if(st.sidebar.button("Data Organization")):
         pass
+
+
+def get_data():
+    return data

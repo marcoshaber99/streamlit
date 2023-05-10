@@ -2,22 +2,22 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import util
 
-def visualization(data,uploaded_file):
-    # Set up the Streamlit app
-    # st.set_page_config(page_title="Interactive Data Visualization App", layout="wide")
+
+
+def visualization():
+    data = st.session_state["data"]
+
     st.title("Data Visualization")
-    st.write(util.data)
+    st.write(data.head())
     # Add a file uploader to the sidebar
      
-    st.write("Data preview:")
-    st.write(data.head())
 
-    if uploaded_file is not None:
-        columns = data.columns.tolist()
-        x_axis = st.selectbox("Choose the X-axis", columns)
-        y_axis = st.selectbox("Choose the Y-axis", columns)
+
+
+    columns = data.columns.tolist()
+    x_axis = st.selectbox("Choose the X-axis", columns, on_change = visualization)
+    y_axis = st.selectbox("Choose the Y-axis", columns, on_change = visualization)
 
 
     # Supported plot types
@@ -30,13 +30,14 @@ def visualization(data,uploaded_file):
     }
 
     # Add a plot type selection dropdown to the sidebar
-    plot_type = st.selectbox("Choose a plot type", options=list(plot_types.keys()))
+    plot_type = st.selectbox("Choose a plot type", options=list(plot_types.keys()), on_change=visualization)
 
 
-    if uploaded_file is not None:
-        plot_function = plot_types[plot_type]
-        plt.figure(figsize=(12, 6))
-        plot_function(data=data, x=x_axis, y=y_axis)
-        st.pyplot(plt.gcf())
+    
+    plot_function = plot_types[plot_type]
+    plt.figure(figsize=(12, 6))
+    plot_function(data=data, x=x_axis, y=y_axis)
+    st.pyplot(plt.gcf())
+
 
 
