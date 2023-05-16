@@ -11,6 +11,11 @@ st.sidebar.header("Upload your dataset")
 
 uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
 
+routes = {
+    "visualization": visualization,
+    "predictions": predictions,
+    "organazations": data_clustering,
+}
 
 # Read the uploaded file and store it in a DataFrame
 if uploaded_file is not None:
@@ -20,21 +25,21 @@ if uploaded_file is not None:
 
     st.session_state["data"] = data
 
-# button_style = "background-color:inherit; border: none; color: white; font-size: 1.5rem; margin-top: 2rem;"
 
-# st.markdown(button_style, unsafe_allow_html=True)
-
-
-if len(data) != 0:
+if "data" in st.session_state:
     # visualization(data, uploaded_file)
     if st.sidebar.button("Data Visualization"):
-        visualization()
+        st.session_state["route"] = "visualization"
 
     if st.sidebar.button("Data Prediction"):
-        predictions()
+        st.session_state["route"] = "predictions"
 
     if st.sidebar.button("Data Organization"):
-        data_clustering()
+        st.session_state["route"] = "organazations"
+
+    if "route" in st.session_state:
+        st.write(st.session_state["route"])
+        routes[st.session_state["route"]]()
 
 
 def get_data():

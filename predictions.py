@@ -9,9 +9,17 @@ from sklearn.svm import SVR
 import numpy as np
 import sklearn.metrics as matrix
 from sklearn.metrics import mean_squared_error
+import io
 
 
 def predictions():
+    def save_plot_as_pdf(fig):
+        pdf_bytes = io.BytesIO()
+        fig.savefig(pdf_bytes, format="pdf", bbox_inches="tight")
+        plt.close(fig)
+        pdf_bytes.seek(0)
+        return pdf_bytes
+
     data = st.session_state["data"]
 
     def create_plot(x_test, y_predictions, algo_name):
@@ -27,11 +35,15 @@ def predictions():
         axes.set_title(algo_name)
         axes.legend()
 
-        # Remove empty subplot
-        # fig.delaxes(axes[1, 1])
-        # Adjust spacing between subplots
-        # fig.tight_layout()
         st.pyplot(plt.gcf())
+
+        pdf_bytes = save_plot_as_pdf(fig)
+        st.download_button(
+            label="Download Plot as PDF",
+            data=pdf_bytes,
+            file_name="prediction_results.pdf",
+            mime="application/pdf",
+        )
 
     def generate_predictions():
         algo_predictions = pd.DataFrame()
@@ -68,8 +80,8 @@ def predictions():
     st.title("Data Predictions")
 
     columns = data.columns.tolist()
-    x_axis = st.selectbox("Choose Input Column", columns, on_change=predictions)
-    y_axis = st.selectbox("Choose Output Column", columns, on_change=predictions)
+    x_axis = st.selectbox("Choose Input Column", columns, key="x axis")
+    y_axis = st.selectbox("Choose Output Column", columns, key="y axis")
 
     options = [
         "K-Nearest Neighbors",
@@ -82,7 +94,6 @@ def predictions():
         "Select Options",
         options,
         default=default_option,
-        on_change=predictions,
     )
 
     algorithm_type = {
@@ -92,5 +103,5 @@ def predictions():
         "Support Vector Machines": SVR(),
     }
 
-    if len(selected_options) > 0:
+    if len(selected_options)>0:
         generate_predictions()

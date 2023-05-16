@@ -5,13 +5,18 @@ from sklearn.cluster import BisectingKMeans
 from sklearn_extra.cluster import KMedoids
 import matplotlib.pyplot as plt
 import pandas as pd
+import io
 
 
-def data_clustering(callback_func=None):
+def data_clustering():
+    def save_plot_as_pdf(fig):
+        pdf_bytes = io.BytesIO()
+        fig.savefig(pdf_bytes, format="pdf", bbox_inches="tight")
+        plt.close(fig)
+        pdf_bytes.seek(0)
+        return pdf_bytes
+
     st.title("Data Organization")
-
-    def on_generate_handler():
-        data_clustering(train_model)
 
     data = st.session_state["data"]
 
@@ -27,15 +32,15 @@ def data_clustering(callback_func=None):
             # Get the coordinates of the cluster centers
             centers = model.cluster_centers_
 
-            plt.figure(figsize=(12, 8))
-            plt.scatter(
+            fig, ax = plt.subplots(figsize=(12, 8))
+            ax.scatter(
                 clustering_data[:, 0],
                 clustering_data[:, 1],
                 c=labels,
                 cmap="viridis",
                 label="Clusters",
             )
-            plt.scatter(
+            ax.scatter(
                 centers[:, 0],
                 centers[:, 1],
                 c="red",
@@ -43,11 +48,21 @@ def data_clustering(callback_func=None):
                 s=100,
                 label="Centroids",
             )
-            plt.xlabel("Feature 1")
-            plt.ylabel("Feature 2")
-            plt.title("Clustering Results")
-            plt.legend()
-            st.pyplot(plt)
+            ax.set_xlabel("Feature 1")
+            ax.set_ylabel("Feature 2")
+            ax.set_title("Clustering Results")
+            ax.legend()
+
+            # Save the plot as a PDF
+            pdf_bytes = save_plot_as_pdf(fig)
+            st.download_button(
+                label="Download Plot as PDF",
+                data=pdf_bytes,
+                file_name="clustering_results.pdf",
+                mime="application/pdf",
+            )
+
+            st.pyplot(fig)
 
     algorithm_types = {
         "K-Means": KMeans,
@@ -59,39 +74,31 @@ def data_clustering(callback_func=None):
         "Choose an algorithm",
         options=list(algorithm_types.keys()),
         key="algorithm_type",
-        on_change=data_clustering,
     )
 
     input_column_X = st.selectbox(
         "Choose X Column",
         data.columns,
-        key="input_column_X",  # Added unique key
-        on_change=data_clustering,
+        key="input_column_X",
     )
 
     input_column_Y = st.selectbox(
         "Choose Y Column",
         data.columns,
-        key="input_column_Y",  # Added unique key
-        on_change=data_clustering,
+        key="input_column_Y",
     )
 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
     number_of_clusters = st.number_input(
         "Enter amount of clusters",
-        on_change=data_clustering,
         format="%d",
         min_value=1,
         max_value=10,
-        key="number_of_clusters",  # Added unique key
+        key="number_of_clusters",
     )
 
     number_of_clusters = int(number_of_clusters)
 
-    print(number_of_clusters)
-
-    st.button("Generate", on_click=on_generate_handler)
-
-    if callback_func != None:
-        callback_func()
+    if st.button("Generate"):
+        train_model()
