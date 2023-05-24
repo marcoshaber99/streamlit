@@ -19,8 +19,8 @@ def visualization():
     st.write(data.head())
 
     columns = data.columns.tolist()
-    x_axis = st.selectbox("Choose the X-axis", columns, on_change=visualization)
-    y_axis = st.selectbox("Choose the Y-axis", columns, on_change=visualization)
+    x_axis = st.selectbox("Choose the X-axis", columns, key="x-axis")
+    y_axis = st.selectbox("Choose the Y-axis", columns, key="y-axis")
 
     # Supported plot types
     plot_types = {
@@ -33,8 +33,7 @@ def visualization():
 
     # Add a plot type selection dropdown to the sidebar
     plot_type = st.selectbox(
-        "Choose a plot type",
-        options=list(plot_types.keys()),
+        "Choose a plot type", options=list(plot_types.keys()), key="plot"
     )
 
     plot_function = plot_types[plot_type]

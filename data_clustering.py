@@ -5,6 +5,7 @@ from sklearn.cluster import BisectingKMeans
 from sklearn_extra.cluster import KMedoids
 import matplotlib.pyplot as plt
 import pandas as pd
+
 import io
 
 
@@ -18,13 +19,19 @@ def data_clustering():
 
     st.title("Data Organization")
 
+    # fetching the data stored in the session state
     data = st.session_state["data"]
+
+    st.write(data.head())
 
     def train_model():
         if number_of_clusters > 0:
+            # instance of the chosen clustering model
             model = algorithm_types[algorithm_type](number_of_clusters)
+
             clustering_data = data[[input_column_X, input_column_Y]].to_numpy()
 
+            # train model
             model.fit(clustering_data)
 
             labels = model.labels_

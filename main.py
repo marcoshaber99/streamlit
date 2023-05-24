@@ -27,7 +27,6 @@ if uploaded_file is not None:
 
 
 if "data" in st.session_state:
-    # visualization(data, uploaded_file)
     if st.sidebar.button("Data Visualization"):
         st.session_state["route"] = "visualization"
 
@@ -38,7 +37,6 @@ if "data" in st.session_state:
         st.session_state["route"] = "organazations"
 
     if "route" in st.session_state:
-        st.write(st.session_state["route"])
         routes[st.session_state["route"]]()
 
 

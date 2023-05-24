@@ -64,7 +64,6 @@ def predictions():
 
             score = matrix.mean_squared_error(y_test, y_pred)
 
-            # print(score)
             algo_predictions = pd.concat(
                 [
                     algo_predictions,
@@ -78,6 +77,8 @@ def predictions():
         st.write(algo_predictions)
 
     st.title("Data Predictions")
+
+    st.write(data.head())
 
     columns = data.columns.tolist()
     x_axis = st.selectbox("Choose Input Column", columns, key="x axis")
@@ -103,5 +104,5 @@ def predictions():
         "Support Vector Machines": SVR(),
     }
 
-    if len(selected_options)>0:
+    if len(selected_options) > 0:
         generate_predictions()
